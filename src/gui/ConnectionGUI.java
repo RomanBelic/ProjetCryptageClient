@@ -1,4 +1,4 @@
-package GUI;
+package gui;
 import java.awt.Dimension;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -56,7 +56,7 @@ public class ConnectionGUI extends JFrame{
 		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);			// Stop running when we close the window
 		attachActions();
 		guiLogic = new ConnectionGUILogic(this);
-		guiLogic.OnWindowStart(this, new Object[]{});
+		guiLogic.onWindowInit(this, new Object[]{});
 	}
 	
 	private void attachActions(){

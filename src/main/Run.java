@@ -2,7 +2,7 @@ package main;
 
 import java.awt.EventQueue;
 
-import GUI.ConnectionGUI;
+import gui.ConnectionGUI;
 
 public class Run {
 

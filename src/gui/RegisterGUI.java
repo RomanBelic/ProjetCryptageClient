@@ -1,4 +1,4 @@
-package GUI;
+package gui;
 
 import java.awt.Dimension;
 import javax.swing.JButton;
@@ -59,7 +59,7 @@ public class RegisterGUI extends JFrame{
 		setLocationRelativeTo(null);
 		guilogic = new RegisterGUILogic(this);
 		attachActions(guilogic);
-		guilogic.OnWindowStart(this, new Object(){});
+		guilogic.onWindowInit(this, new Object(){});
 	}
 	
 	private void attachActions(IRegisterGUI guiLogic){

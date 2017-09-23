@@ -1,4 +1,4 @@
-package GUI;
+package gui;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;
@@ -24,7 +24,7 @@ public class RegisterGUILogic extends AbstractUILogic<RegisterGUI> implements IR
 	}
 
 	@Override
-	public void OnWindowStart(Component sender, Object... args) {
+	public void onWindowInit(Component sender, Object... args) {
 		ui.setVisible(true);
 		
 	}

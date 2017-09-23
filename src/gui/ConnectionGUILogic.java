@@ -1,4 +1,4 @@
-package GUI;
+package gui;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;
@@ -19,7 +19,7 @@ public class ConnectionGUILogic extends AbstractUILogic<ConnectionGUI> implement
 
 	@Override
 	public void onRegisterButtonClick(ActionEvent e, JComponent sender) {
-	
+		
 		
 	}
 
@@ -30,7 +30,7 @@ public class ConnectionGUILogic extends AbstractUILogic<ConnectionGUI> implement
 	}
 
 	@Override
-	public void OnWindowStart(Component sender, Object... args) {
+	public void onWindowInit(Component sender, Object... args) {
 		ui.setVisible(true);
 	}
 }
