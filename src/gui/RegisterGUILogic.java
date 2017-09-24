@@ -1,9 +1,6 @@
 package gui;
 
-import java.awt.Component;
 import java.awt.event.ActionEvent;
-
-import javax.swing.JComponent;
 
 public class RegisterGUILogic extends AbstractUILogic<RegisterGUI> implements IRegisterGUI{
 
@@ -12,20 +9,28 @@ public class RegisterGUILogic extends AbstractUILogic<RegisterGUI> implements IR
 	}
 	
 	@Override
-	public void onRegisterButtonClick(ActionEvent e, JComponent sender) {
+	public void onValiderButtonClick(ActionEvent e, Object sender) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onExitButtonClick(ActionEvent e, JComponent sender) {
+	public void onExitButtonClick(ActionEvent e, Object sender) {
 		// TODO Auto-generated method stub
-		ui.setVisible(false);
+		if (ui.icallback == null)
+			return;
+		ui.icallback.onCalledBack(0);
 	}
 
 	@Override
-	public void onWindowInit(Component sender, Object... args) {
-		ui.setVisible(true);
+	public void onWindowInit(Object... args) {
+	
+		
+	}
+
+	@Override
+	public void onWindowClose(Object... args) {
+		// TODO Auto-generated method stub
 		
 	}
 

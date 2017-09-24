@@ -31,9 +31,6 @@ public class ConnectionGUI extends JFrame{
 		buttonRegister = new JButton("S'inscrire");
 		panel.add(buttonConnection);
 		panel.add(buttonRegister);
-		this.getRootPane().setDefaultButton(buttonConnection);				// Set the default button
-		setSize(new Dimension(290, 220));
-		setLocationRelativeTo(null);
 	    getContentPane().setLayout(null);
 	    getContentPane().add(panel);
 	    userloginJTextfield = new JTextField("");
@@ -53,13 +50,16 @@ public class ConnectionGUI extends JFrame{
 	    buttonExit = new JButton("Exit");
 	    buttonExit.setBounds(92, 135, 97, 25);
 	    getContentPane().add(buttonExit);
-		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);			// Stop running when we close the window
-		attachActions();
+		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);			
+		setSize(new Dimension(290, 220));
+		setLocationRelativeTo(null);
+		
 		guiLogic = new ConnectionGUILogic(this);
+		attachActions(guiLogic);
 		guiLogic.onWindowInit(this, new Object[]{});
 	}
 	
-	private void attachActions(){
+	private void attachActions(IConnectionGUI guiLogic){
 		buttonConnection.addActionListener((e) -> guiLogic.onConnectionButtonClick(e, buttonConnection));
 		buttonRegister.addActionListener((e) -> guiLogic.onRegisterButtonClick(e, buttonRegister));
 		buttonExit.addActionListener((e) -> guiLogic.onCloseWindowButtonClick(e, buttonExit));

@@ -2,9 +2,7 @@ package gui;
 
 import java.awt.event.ActionEvent;
 
-import javax.swing.JComponent;
-
 public interface IRegisterGUI extends IWindowGUI {
-	void onRegisterButtonClick(ActionEvent e, JComponent sender);
-	void onExitButtonClick(ActionEvent e, JComponent sender);
+	void onValiderButtonClick(ActionEvent e, Object sender);
+	void onExitButtonClick(ActionEvent e, Object sender);
 }
