@@ -3,20 +3,24 @@ package gui;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 
-import utils.UIUtils;
+import models.Message;
+import threading.CommunicationThread;
 
 public class ConnectionGUILogic extends AbstractUILogic<ConnectionGUI> implements IConnectionGUI{
 
 	private final RegisterGUI regUI;
+	private CommunicationThread ct;
 	public ConnectionGUILogic(ConnectionGUI ui) {
 		super(ui);
-		regUI = UIUtils.getRegisterGUI();
-		regUI.setCallBackOperation(this::onReturnedFromRegisterUI);
+		regUI = new RegisterGUI();
+		regUI.guiLogic.setOnCloseButtonCallback(this::onReturnedFromRegisterUI);
+		ct = new CommunicationThread("localhost",8888);
+		ct.start();
 	}
 
 	@Override
 	public void onConnectionButtonClick(ActionEvent e, Object sender) {
-		
+		ct.sendMessage(new Message());
 		
 	}
 
@@ -29,6 +33,7 @@ public class ConnectionGUILogic extends AbstractUILogic<ConnectionGUI> implement
 	@Override
 	public void onCloseWindowButtonClick(ActionEvent e, Object sender) {
 		ui.dispose();
+		regUI.dispose();
 		System.exit(0);
 	}
 

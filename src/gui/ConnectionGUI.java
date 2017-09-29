@@ -21,7 +21,7 @@ public class ConnectionGUI extends JFrame{
 	protected final JButton buttonRegister;
 	protected final JButton buttonConnection;
 	protected final JButton buttonExit;
-	private final IConnectionGUI guiLogic;
+	protected final IConnectionGUI guiLogic;
 	
 	public ConnectionGUI(){
 		super("GUI Client Serveur");

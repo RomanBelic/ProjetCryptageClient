@@ -9,8 +9,6 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 
-import interfaces.Patterns.ICallback;
-
 public class RegisterGUI extends JFrame {
 
 	/**
@@ -22,8 +20,7 @@ public class RegisterGUI extends JFrame {
 	protected final JButton buttonValider;
 	protected final JTextField usernameJTextfield;
 	protected final JButton buttonExit;
-	private final IRegisterGUI guiLogic;
-	protected ICallback<Object> icallback;
+	protected final IRegisterGUI guiLogic;
 	
 	public RegisterGUI(){
 		super("User's register");
@@ -68,9 +65,5 @@ public class RegisterGUI extends JFrame {
 	private void attachActions(IRegisterGUI guiLogic){
 		buttonValider.addActionListener((e) -> guiLogic.onValiderButtonClick(e, e.getSource()));
 		buttonExit.addActionListener((e) -> guiLogic.onExitButtonClick(e, e.getSource()));
-	}
-
-	public void setCallBackOperation(ICallback<Object> icallback) {
-		this.icallback = icallback;
 	}
 }
