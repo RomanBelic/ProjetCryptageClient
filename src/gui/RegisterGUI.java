@@ -8,6 +8,8 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
+import java.awt.Color;
+import javax.swing.SwingConstants;
 
 public class RegisterGUI extends JFrame {
 
@@ -15,12 +17,13 @@ public class RegisterGUI extends JFrame {
 	 * 
 	 */
 	private static final long serialVersionUID = 7289001126939436994L;
-	protected final JTextField userloginJTextfield;
+	protected final JTextField loginJTextfield;
 	protected final JPasswordField passwordJPassword;
 	protected final JButton buttonValider;
 	protected final JTextField usernameJTextfield;
 	protected final JButton buttonExit;
 	protected final IRegisterGUI guiLogic;
+	protected final JLabel errLabel;
 	
 	public RegisterGUI(){
 		super("User's register");
@@ -29,17 +32,17 @@ public class RegisterGUI extends JFrame {
 		usernameLabel.setBounds(12, 10, 70, 30);
 		JLabel passwordLabel = new JLabel("Mot de passe : ");
 		passwordLabel.setBounds(12, 53, 89, 30);
-		userloginJTextfield = new JTextField("");
-		userloginJTextfield.setBounds(119, 13, 100, 24);
+		loginJTextfield = new JTextField("");
+		loginJTextfield.setBounds(119, 13, 100, 24);
 		passwordJPassword = new JPasswordField("");
 		passwordJPassword.setBounds(119, 50, 100, 24);
 		buttonValider = new JButton("Valider");
-		buttonValider.setBounds(69, 127, 107, 25);
-		userloginJTextfield.setPreferredSize(new Dimension(100, 24));
+		buttonValider.setBounds(69, 167, 107, 25);
+		loginJTextfield.setPreferredSize(new Dimension(100, 24));
 		passwordJPassword.setPreferredSize(new Dimension(100, 24));
 		panel.setLayout(null);
 		panel.add(usernameLabel);
-		panel.add(userloginJTextfield);
+		panel.add(loginJTextfield);
 		panel.add(passwordLabel);
 		panel.add(passwordJPassword);
 		panel.add(buttonValider);
@@ -48,18 +51,30 @@ public class RegisterGUI extends JFrame {
 	    lblNom.setBounds(12, 84, 70, 30);
 	    panel.add(lblNom);
 	    buttonExit = new JButton("Annuler");
-	    buttonExit.setBounds(69, 165, 107, 25);
+	    buttonExit.setBounds(69, 205, 107, 25);
 	    panel.add(buttonExit);
 	    usernameJTextfield = new JTextField("");
 	    usernameJTextfield.setPreferredSize(new Dimension(100, 24));
 	    usernameJTextfield.setBounds(119, 87, 100, 24);
 	    panel.add(usernameJTextfield);
+	    
+	    errLabel = new JLabel("");
+	    errLabel.setHorizontalAlignment(SwingConstants.CENTER);
+	    errLabel.setForeground(Color.RED);
+	    errLabel.setBounds(0, 127, 252, 27);
+	    panel.add(errLabel);
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);			// Stop running when we close the window
-		setSize(270, 267);	
+		setSize(270, 290);	
 		setLocationRelativeTo(null);
 		guiLogic = new RegisterGUILogic(this);
 		attachActions(guiLogic);
-		guiLogic.onWindowInit(new Object(){});
+		guiLogic.onWindowInit(0);
+	}
+	
+	@Override
+	public void dispose() {
+		guiLogic.onDisposing();
+		super.dispose();
 	}
 	
 	private void attachActions(IRegisterGUI guiLogic){

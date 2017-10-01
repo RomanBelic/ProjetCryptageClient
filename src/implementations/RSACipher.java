@@ -9,11 +9,10 @@ import interfaces.Ciphering.ICipher;
 
 public class RSACipher implements ICipher {
 
-	private final Cipher cipher;
 	private final KeyPairGenerator kpg;
 	
 	public RSACipher() throws NoSuchAlgorithmException, NoSuchPaddingException{
-		cipher = Cipher.getInstance("RSA");
+		Cipher.getInstance("RSA");
 		kpg = KeyPairGenerator.getInstance("RSA");
 		kpg.initialize(512);
 	}

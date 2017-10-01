@@ -1,27 +1,35 @@
 package gui;
 
-import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 
+import implementations.HashImplementation;
+import interfaces.Communication;
+import interfaces.Ciphering.IHashable;
 import models.Message;
 import threading.CommunicationThread;
 
-public class ConnectionGUILogic extends AbstractUILogic<ConnectionGUI> implements IConnectionGUI{
+public class ConnectionGUILogic extends AbstractUILogic<ConnectionGUI> implements IConnectionGUI {
 
 	private final RegisterGUI regUI;
-	private CommunicationThread ct;
+	private final IHashable hasher;
+	private final CommunicationThread commThread;
+	
 	public ConnectionGUILogic(ConnectionGUI ui) {
 		super(ui);
-		regUI = new RegisterGUI();
-		regUI.guiLogic.setOnCloseButtonCallback(this::onReturnedFromRegisterUI);
-		ct = new CommunicationThread("localhost",8888);
-		ct.start();
+		this.hasher = new HashImplementation();
+		this.regUI = new RegisterGUI();
+		this.regUI.guiLogic.setOnCloseButtonCallback(this::onReturnedFromRegisterUI);
+		this.commThread = CommunicationThread.getInstance();
+		this.commThread.getEventAdapter().setOnChallengeListener(this::onChallengeAccepted);
+		this.commThread.getEventAdapter().setOnLoginErrorListener(this::onLoginErrorReceived);
+		this.commThread.getEventAdapter().setOnConnectedListener(this::onConnected);
 	}
 
 	@Override
 	public void onConnectionButtonClick(ActionEvent e, Object sender) {
-		ct.sendMessage(new Message());
-		
+		Message msg = new Message();
+		msg.setPackets(Communication.F_AskChallenge);
+		commThread.sendMessage(msg);
 	}
 
 	@Override
@@ -45,13 +53,38 @@ public class ConnectionGUILogic extends AbstractUILogic<ConnectionGUI> implement
 	@Override
 	public void onWindowClose(Object... args) {
 		// TODO Auto-generated method stub
-		
 	}
 	
 	private void onReturnedFromRegisterUI(Object arg){
-		EventQueue.invokeLater(() -> {
-			regUI.setVisible(false);
-			ui.setVisible(true);
-		});
+		regUI.setVisible(false);
+		ui.setVisible(true);
+	}
+	
+	private Void onConnected(Message msg){
+		ui.setVisible(false);
+		regUI.setVisible(false);
+		ui.dispose();
+		regUI.dispose();
+		commThread.getEventAdapter().setOnChallengeListener(null);
+		commThread.getEventAdapter().setOnLoginErrorListener(null);
+		commThread.getEventAdapter().setOnConnectedListener(null);
+		new ChatGUI();
+		return null;
+	}
+	
+	private Void onLoginErrorReceived (Message msg){
+		ui.errLabel.setText(msg.getMessage());
+		return null;
+	}
+	
+	private Void onChallengeAccepted(Message msg){
+		String serverKey = msg.getMessage();
+		String clientHash = hasher.createHashString(serverKey);
+		String login = ui.userloginJTextfield.getText();
+		String password = hasher.createHashString(new String(ui.passwordJPassword.getPassword()));	
+		String messageText = String.format("%s;%s;%s", clientHash,login,password);
+		msg.setMessage(messageText);
+		commThread.sendMessage(msg);
+		return null;
 	}
 }

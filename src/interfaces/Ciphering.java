@@ -6,4 +6,10 @@ public class Ciphering {
 		byte[] encrypt(byte[] input);
 		byte[] decrypt(byte[] input);
 	}
+	
+	public interface IHashable{
+		//CRC32 method
+		long createHash(byte[] input);
+		String createHashString(String input);
+	}
 }

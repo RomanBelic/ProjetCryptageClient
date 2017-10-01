@@ -4,42 +4,45 @@ import java.net.Socket;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import implementations.CommunicationProtocolImplementation;
+import implementations.GUIEventAdapter;
 import implementations.ResponseProcessorImplementation;
 import interfaces.Communication.ICommunicationProtocol;
-import interfaces.Communication.IEventAdapter;
 import interfaces.Communication.IResponseProcessor;
 import models.Message;
 
 public class CommunicationThread extends Thread implements Runnable {
-
+	
 	private Socket socket;
-	private volatile IEventAdapter<Message> eventAdapter;
 	private volatile AtomicBoolean isActive;
 	private ICommunicationProtocol<Message> commProtocol;
 	private IResponseProcessor<Message> responseProcessor;
-	private final int port;
-	private final String host;
+	private GUIEventAdapter eventAdapter;
+	private int port;
+	private String host;
+	private static final CommunicationThread instance = new CommunicationThread();
 	
-	public IEventAdapter<Message> getEventAdapter(){
+	public GUIEventAdapter getEventAdapter() {
 		return eventAdapter;
 	}
 	
-	public void setEventAdapter(IEventAdapter<Message> eventAdapter){
-		this.eventAdapter = eventAdapter;
+	public static CommunicationThread getInstance(){
+		return instance;
 	}
 	
-	public CommunicationThread (String host, int port){
+	private CommunicationThread(){
+		this.host = "";
+		this.port = 0;
+		this.isActive = new AtomicBoolean(false);
+		this.eventAdapter = new GUIEventAdapter();
+	}
+	
+	public void connectToServer(String host, int port){
 		this.host = host;
 		this.port = port;
-		this.isActive = new AtomicBoolean(false);
+		start();
 	}
 	
-	
-	public synchronized void closeSocket(){
-		commProtocol.closeSocket();
-	}
-	
-	public synchronized void sendMessage(Message msg){
+	public void sendMessage(Message msg){
 		if (socket == null || socket.isClosed())
 			return;
 		commProtocol.sendResponse(msg);
@@ -64,19 +67,19 @@ public class CommunicationThread extends Thread implements Runnable {
 			while((msg = commProtocol.getResponse()) != null && isActive.get()){
 				responseProcessor.processResponse(msg, eventAdapter);
 			}	
-			closeSocket();
 		}catch(Exception e){
 			System.err.println(e.getMessage());
 			e.printStackTrace();
 		}
-		isActive.set(false);
+		stopClient();
 	}
 	
 
-	public synchronized void stopClient(){
+	public void stopClient(){
 		if(!isActive.get())
 			return;
 		isActive.set(false);
+		commProtocol.closeSocket();
 	}
 	
 	@Override

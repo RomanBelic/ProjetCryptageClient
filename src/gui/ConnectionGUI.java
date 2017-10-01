@@ -8,6 +8,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
+import java.awt.Color;
 
 public class ConnectionGUI extends JFrame{
 	
@@ -22,11 +23,12 @@ public class ConnectionGUI extends JFrame{
 	protected final JButton buttonConnection;
 	protected final JButton buttonExit;
 	protected final IConnectionGUI guiLogic;
+	protected final JLabel errLabel;
 	
 	public ConnectionGUI(){
 		super("GUI Client Serveur");
 		JPanel panel = new JPanel();
-		panel.setBounds(0, 90, 282, 35);
+		panel.setBounds(0, 118, 282, 35);
 		buttonConnection = new JButton("Valider");
 		buttonRegister = new JButton("S'inscrire");
 		panel.add(buttonConnection);
@@ -48,15 +50,21 @@ public class ConnectionGUI extends JFrame{
 	    passwordJPassword.setBounds(150, 48, 100, 24);
 	    getContentPane().add(passwordJPassword);
 	    buttonExit = new JButton("Exit");
-	    buttonExit.setBounds(92, 135, 97, 25);
+	    buttonExit.setBounds(93, 155, 97, 25);
 	    getContentPane().add(buttonExit);
+	    
+	    errLabel = new JLabel("");
+	    errLabel.setHorizontalAlignment(SwingConstants.CENTER);
+	    errLabel.setForeground(Color.RED);
+	    errLabel.setBounds(27, 84, 223, 27);
+	    getContentPane().add(errLabel);
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);			
-		setSize(new Dimension(290, 220));
+		setSize(new Dimension(290, 230));
 		setLocationRelativeTo(null);
 		
 		guiLogic = new ConnectionGUILogic(this);
 		attachActions(guiLogic);
-		guiLogic.onWindowInit(this, new Object[]{});
+		guiLogic.onWindowInit(0);
 	}
 	
 	private void attachActions(IConnectionGUI guiLogic){

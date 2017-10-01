@@ -37,7 +37,7 @@ public class CommunicationProtocolImplementation implements ICommunicationProtoc
 	}
 	
 	@Override
-	public synchronized void sendResponse(Message message) {
+	public void sendResponse(Message message) {
 		if (oos == null || socket == null || socket.isClosed())
 			return;
 		try {
@@ -49,7 +49,7 @@ public class CommunicationProtocolImplementation implements ICommunicationProtoc
 	}
 
 	@Override
-	public synchronized void closeSocket() {
+	public void closeSocket() {
 		// TODO Auto-generated method stub
 		try {
 			if (oos != null)
