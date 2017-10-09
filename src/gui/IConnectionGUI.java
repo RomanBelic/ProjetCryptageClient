@@ -6,4 +6,5 @@ public interface IConnectionGUI extends IWindowGUI {
 	void onConnectionButtonClick(ActionEvent e, Object sender);
 	void onRegisterButtonClick(ActionEvent e, Object sender);
 	void onCloseWindowButtonClick(ActionEvent e, Object sender);
+	void onDisposing ();
 }

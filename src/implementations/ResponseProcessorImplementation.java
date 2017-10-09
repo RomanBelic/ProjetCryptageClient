@@ -1,20 +1,25 @@
 package implementations;
 
-import interfaces.Communication;
+import interfaces.Ciphering.ICipher;
 import interfaces.Ciphering.IHashable;
+import interfaces.Communication;
+
 import interfaces.Communication.ICommunicationProtocol;
 import interfaces.Communication.IEventAdapter;
 import interfaces.Communication.IResponseProcessor;
 import models.Message;
+import utils.Context;
+import utils.Utils;
 
 public class ResponseProcessorImplementation implements IResponseProcessor<Message> {
 
 	private final ICommunicationProtocol<Message> commProtocol;
 	private final IHashable hasher;
+	private ICipher cipher;
 	
 	public ResponseProcessorImplementation(ICommunicationProtocol<Message> commProtocol){
 		this.commProtocol = commProtocol;
-		this.hasher = new HashImplementation();
+		this.hasher = Utils.getHasherInstance();
 	}
 	
 	@Override
@@ -26,6 +31,11 @@ public class ResponseProcessorImplementation implements IResponseProcessor<Messa
 		}
 		else if ((packets | Communication.F_PassedChallenge) == Communication.F_PassedChallenge){ 
 			if (msg.getCode() == Communication.OK){
+				String[] splitStr = msg.getMessage().split(";");
+				int clientId = splitStr.length > 0 ? new Integer(splitStr[0]).intValue() : 0;
+				String clientName = splitStr.length > 1 ? splitStr[1] : null;
+				Context.getCurrentClient().setId(clientId);
+				Context.getCurrentClient().setName(clientName);
 				eventAdapter.onConnected(msg);
 			}else if (msg.getCode() == Communication.No_Content){
 				msg.setMessage("Invalid login/password");
@@ -46,6 +56,9 @@ public class ResponseProcessorImplementation implements IResponseProcessor<Messa
 				eventAdapter.onSubscribeErrorReceived(msg);
 			}
 		}
+		else if ((packets | Communication.F_PassedChallenge | Communication.F_SentMsg) == (Communication.F_PassedChallenge | Communication.F_SentMsg)){
+			eventAdapter.onMessageReceived(msg);
+		}	
 	}
 
 }

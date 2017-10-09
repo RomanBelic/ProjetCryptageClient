@@ -1,6 +1,5 @@
 package interfaces;
 
-import interfaces.Patterns.IDelegate;
 import models.Message;
 import models.Upload;
 import threading.CommunicationThread;

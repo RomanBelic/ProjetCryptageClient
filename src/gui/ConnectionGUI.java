@@ -67,6 +67,12 @@ public class ConnectionGUI extends JFrame{
 		guiLogic.onWindowInit(0);
 	}
 	
+	@Override
+	public void dispose() {
+		guiLogic.onDisposing();
+		super.dispose();
+	}
+	
 	private void attachActions(IConnectionGUI guiLogic){
 		buttonConnection.addActionListener((e) -> guiLogic.onConnectionButtonClick(e, buttonConnection));
 		buttonRegister.addActionListener((e) -> guiLogic.onRegisterButtonClick(e, buttonRegister));

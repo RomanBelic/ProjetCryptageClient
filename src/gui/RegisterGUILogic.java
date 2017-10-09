@@ -2,24 +2,22 @@ package gui;
 
 import java.awt.event.ActionEvent;
 
-import implementations.HashImplementation;
 import interfaces.Ciphering.IHashable;
 import interfaces.Communication;
 import interfaces.Patterns.ICallback;
 import models.Message;
 import threading.CommunicationThread;
+import utils.Utils;
 
 public class RegisterGUILogic extends AbstractUILogic<RegisterGUI> implements IRegisterGUI{
 
 	private ICallback<Object> callbackCloseButton;
-	private final IHashable hasher;
 	private final CommunicationThread commThread;
 	private final RegisterGUI ui;
 	
 	public RegisterGUILogic(RegisterGUI ui){
 		super(ui);
 		this.ui = ui;
-		this.hasher = new HashImplementation();
 		this.commThread = CommunicationThread.getInstance();
 		this.commThread.getEventAdapter().setOnSubscribeErrorListener(this::onSubscribeErrorReceived);
 		this.commThread.getEventAdapter().setOnSubscribedListener(this::onSubscribed);
@@ -32,7 +30,7 @@ public class RegisterGUILogic extends AbstractUILogic<RegisterGUI> implements IR
 	
 	@Override
 	public void onValiderButtonClick(ActionEvent e, Object sender) {
-		// TODO Auto-generated method stub
+		IHashable hasher = Utils.getHasherInstance();
 		String login = ui.loginJTextfield.getText();
 		String password = new String(ui.passwordJPassword.getPassword());
 		password = hasher.createHashString(password);
@@ -74,6 +72,7 @@ public class RegisterGUILogic extends AbstractUILogic<RegisterGUI> implements IR
 
 	@Override
 	public void onDisposing() {
+		this.callbackCloseButton = null;
 		this.commThread.getEventAdapter().setOnSubscribeErrorListener(null);
 		this.commThread.getEventAdapter().setOnSubscribedListener(null);
 	} 

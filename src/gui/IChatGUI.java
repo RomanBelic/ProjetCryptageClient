@@ -6,4 +6,6 @@ public interface IChatGUI extends IWindowGUI {
 	void onSendMessageButtonClick (ActionEvent e, Object sender);
 	void onExitButtonClick (ActionEvent e, Object sender);
 	void onSendFileButtonClick (ActionEvent e, Object sender);
+	void onOpenFileChooserClick (ActionEvent e, Object sender);
+	void onDisposing ();
 }

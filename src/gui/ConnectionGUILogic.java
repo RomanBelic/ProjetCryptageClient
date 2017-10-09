@@ -2,21 +2,19 @@ package gui;
 
 import java.awt.event.ActionEvent;
 
-import implementations.HashImplementation;
 import interfaces.Communication;
 import interfaces.Ciphering.IHashable;
 import models.Message;
 import threading.CommunicationThread;
+import utils.Utils;
 
 public class ConnectionGUILogic extends AbstractUILogic<ConnectionGUI> implements IConnectionGUI {
 
 	private final RegisterGUI regUI;
-	private final IHashable hasher;
 	private final CommunicationThread commThread;
 	
 	public ConnectionGUILogic(ConnectionGUI ui) {
 		super(ui);
-		this.hasher = new HashImplementation();
 		this.regUI = new RegisterGUI();
 		this.regUI.guiLogic.setOnCloseButtonCallback(this::onReturnedFromRegisterUI);
 		this.commThread = CommunicationThread.getInstance();
@@ -65,9 +63,6 @@ public class ConnectionGUILogic extends AbstractUILogic<ConnectionGUI> implement
 		regUI.setVisible(false);
 		ui.dispose();
 		regUI.dispose();
-		commThread.getEventAdapter().setOnChallengeListener(null);
-		commThread.getEventAdapter().setOnLoginErrorListener(null);
-		commThread.getEventAdapter().setOnConnectedListener(null);
 		new ChatGUI();
 		return null;
 	}
@@ -78,6 +73,7 @@ public class ConnectionGUILogic extends AbstractUILogic<ConnectionGUI> implement
 	}
 	
 	private Void onChallengeAccepted(Message msg){
+		IHashable hasher = Utils.getHasherInstance();
 		String serverKey = msg.getMessage();
 		String clientHash = hasher.createHashString(serverKey);
 		String login = ui.userloginJTextfield.getText();
@@ -86,5 +82,12 @@ public class ConnectionGUILogic extends AbstractUILogic<ConnectionGUI> implement
 		msg.setMessage(messageText);
 		commThread.sendMessage(msg);
 		return null;
+	}
+
+	@Override
+	public void onDisposing() {
+		commThread.getEventAdapter().setOnChallengeListener(null);
+		commThread.getEventAdapter().setOnLoginErrorListener(null);
+		commThread.getEventAdapter().setOnConnectedListener(null);
 	}
 }

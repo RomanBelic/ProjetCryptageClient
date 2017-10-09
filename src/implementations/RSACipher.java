@@ -11,7 +11,7 @@ public class RSACipher implements ICipher {
 
 	private final KeyPairGenerator kpg;
 	
-	public RSACipher() throws NoSuchAlgorithmException, NoSuchPaddingException{
+	public RSACipher() throws NoSuchAlgorithmException, NoSuchPaddingException {
 		Cipher.getInstance("RSA");
 		kpg = KeyPairGenerator.getInstance("RSA");
 		kpg.initialize(512);
