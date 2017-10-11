@@ -22,12 +22,12 @@ public class RSACipher implements ICipher {
 	}
 	
 	@Override
-	public byte[] encrypt(byte[] input) {
+	public byte[] encrypt(byte[] input, String key) {
 		return null;
 	}
 
 	@Override
-	public byte[] decrypt(byte[] input) {
+	public byte[] decrypt(byte[] input, String key) {
 		// TODO Auto-generated method stub
 		return null;
 	}

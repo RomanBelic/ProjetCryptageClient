@@ -2,9 +2,11 @@ package gui;
 
 import java.awt.event.ActionEvent;
 
+import implementations.PasswordCheckerImplementation;
 import interfaces.Ciphering.IHashable;
 import interfaces.Communication;
 import interfaces.Patterns.ICallback;
+import interfaces.Regex.IRegexChecker;
 import models.Message;
 import threading.CommunicationThread;
 import utils.Utils;
@@ -14,6 +16,7 @@ public class RegisterGUILogic extends AbstractUILogic<RegisterGUI> implements IR
 	private ICallback<Object> callbackCloseButton;
 	private final CommunicationThread commThread;
 	private final RegisterGUI ui;
+	private final IRegexChecker passwordRegex;
 	
 	public RegisterGUILogic(RegisterGUI ui){
 		super(ui);
@@ -21,6 +24,7 @@ public class RegisterGUILogic extends AbstractUILogic<RegisterGUI> implements IR
 		this.commThread = CommunicationThread.getInstance();
 		this.commThread.getEventAdapter().setOnSubscribeErrorListener(this::onSubscribeErrorReceived);
 		this.commThread.getEventAdapter().setOnSubscribedListener(this::onSubscribed);
+		this.passwordRegex = new PasswordCheckerImplementation();
 	}
 	
 	@Override
@@ -29,14 +33,19 @@ public class RegisterGUILogic extends AbstractUILogic<RegisterGUI> implements IR
 	}
 	
 	@Override
-	public void onValiderButtonClick(ActionEvent e, Object sender) {
+	public void onValiderButtonClick(ActionEvent e, Object sender) {	
+		String password = new String(ui.passwordJPassword.getPassword());
+		Message msg = new Message();
+		if (!passwordRegex.hasMatch(password)){
+			msg.setMessage("Password doesn't match requirements");
+			onSubscribeErrorReceived(msg);
+			return;
+		}
 		IHashable hasher = Utils.getHasherInstance();
 		String login = ui.loginJTextfield.getText();
-		String password = new String(ui.passwordJPassword.getPassword());
 		password = hasher.createHashString(password);
 		String userName = ui.usernameJTextfield.getText();
 		String messageText = String.format("%s;%s;%s", login, password, userName);
-		Message msg = new Message();
 		msg.setMessage(messageText);
 		msg.setPackets(Communication.F_AskInscription);
 		commThread.sendMessage(msg);
