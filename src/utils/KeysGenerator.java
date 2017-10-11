@@ -18,7 +18,7 @@ public class KeysGenerator {
 			keyGen.initialize(1024, random);
 			keyPair = keyGen.genKeyPair();
 		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
+			// TODO Auto-generated catch blockff
 			e.printStackTrace();
 		}
 	}
