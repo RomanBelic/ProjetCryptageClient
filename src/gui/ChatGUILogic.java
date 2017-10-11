@@ -58,9 +58,7 @@ public class ChatGUILogic extends AbstractUILogic<ChatGUI> implements IChatGUI {
 	
 	@Override
 	public void onSendFileButtonClick(ActionEvent e, Object sender) {
-		if (Context.getCurrentClient().isEmpty())
-			return;
-		if (fileChooserState != JFileChooser.APPROVE_OPTION)
+		if (fileChooserState != JFileChooser.APPROVE_OPTION || Context.getCurrentClient().isEmpty())
 			return;
 		File file = ui.fileChooser.getSelectedFile();
 		Upload upload = new Upload();

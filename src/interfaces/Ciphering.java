@@ -3,8 +3,8 @@ package interfaces;
 public class Ciphering {
 	
 	public interface ICipher {
-		byte[] encrypt(byte[] input);
-		byte[] decrypt(byte[] input);
+		byte[] encrypt(byte[] input, String key);
+		byte[] decrypt(byte[] input, String key);
 	}
 	
 	public interface IHashable{

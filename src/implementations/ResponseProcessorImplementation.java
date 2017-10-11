@@ -24,6 +24,7 @@ public class ResponseProcessorImplementation implements IResponseProcessor<Messa
 	
 	@Override
 	public void processResponse (Message msg, IEventAdapter<Message> eventAdapter) {
+	
 		// TODO Auto-generated method stub
 		long packets = msg.getPackets();
 		if ((packets | Communication.F_AcceptChallenge) == Communication.F_AcceptChallenge){ 
