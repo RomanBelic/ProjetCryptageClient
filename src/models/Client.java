@@ -1,19 +1,37 @@
 package models;
 
+import java.security.Key;
+import java.security.KeyPair;
+
 public class Client {
 
 	private int id;
 	private String name;
+	private KeyPair clientKeyPair;
+	private Key serverKey;
+	
 	
 	public Client(){
 		this.id = 0;
 		this.name = new String();
+		this.clientKeyPair = null;
+		this.serverKey = null;
 	}
 	
-	public Client(int id, String name) {
-		super();
-		this.id = id;
-		this.name = name;
+	public KeyPair getClientKeyPair() {
+		return clientKeyPair;
+	}
+
+	public void setClientKeyPair(KeyPair clientKeyPair) {
+		this.clientKeyPair = clientKeyPair;
+	}
+
+	public Key getServerKey() {
+		return serverKey;
+	}
+
+	public void setServerKey(Key serverKey) {
+		this.serverKey = serverKey;
 	}
 
 	public int getId() {

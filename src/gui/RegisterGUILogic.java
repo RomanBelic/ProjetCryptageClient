@@ -1,15 +1,18 @@
 package gui;
 
 import java.awt.event.ActionEvent;
+import java.security.Key;
 
+import implementations.SHA256Hasher;
 import implementations.PasswordCheckerImplementation;
+import implementations.RSAKeyGen;
 import interfaces.Ciphering.IHashable;
 import interfaces.Communication;
 import interfaces.Patterns.ICallback;
 import interfaces.Regex.IRegexChecker;
 import models.Message;
 import threading.CommunicationThread;
-import utils.Utils;
+import utils.KeyGenFileHelper;
 
 public class RegisterGUILogic extends AbstractUILogic<RegisterGUI> implements IRegisterGUI{
 
@@ -25,6 +28,7 @@ public class RegisterGUILogic extends AbstractUILogic<RegisterGUI> implements IR
 		this.commThread.getEventAdapter().setOnSubscribeErrorListener(this::onSubscribeErrorReceived);
 		this.commThread.getEventAdapter().setOnSubscribedListener(this::onSubscribed);
 		this.passwordRegex = new PasswordCheckerImplementation();
+		new RSAKeyGen();
 	}
 	
 	@Override
@@ -37,16 +41,23 @@ public class RegisterGUILogic extends AbstractUILogic<RegisterGUI> implements IR
 		String password = new String(ui.passwordJPassword.getPassword());
 		Message msg = new Message();
 		if (!passwordRegex.hasMatch(password)){
-			msg.setMessage("Password doesn't match requirements");
+			msg.setPlainText("Password doesn't match requirements");
 			onSubscribeErrorReceived(msg);
 			return;
 		}
-		IHashable hasher = Utils.getHasherInstance();
+		
+		KeyGenFileHelper keyGenFileHelper = new KeyGenFileHelper("ClientKeys");
+		keyGenFileHelper.createKeyPairStorage();
+		Key publicKeyObject = keyGenFileHelper.getPublicKeyFromStorage();
+	
+		IHashable hasher = new SHA256Hasher();
 		String login = ui.loginJTextfield.getText();
 		password = hasher.createHashString(password);
 		String userName = ui.usernameJTextfield.getText();
+		byte[] clientPublicKey = publicKeyObject.getEncoded();
 		String messageText = String.format("%s;%s;%s", login, password, userName);
-		msg.setMessage(messageText);
+		msg.setPlainText(messageText);
+		msg.setData(clientPublicKey);
 		msg.setPackets(Communication.F_AskInscription);
 		commThread.sendMessage(msg);
 	}
@@ -69,7 +80,7 @@ public class RegisterGUILogic extends AbstractUILogic<RegisterGUI> implements IR
 	}
 	
 	private Void onSubscribeErrorReceived (Message msg){
-		ui.errLabel.setText(msg.getMessage());
+		ui.errLabel.setText(msg.getPlainText());
 		return null;
 	}
 	

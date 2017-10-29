@@ -1,15 +1,21 @@
 package interfaces;
 
+import java.security.Key;
+import java.security.KeyPair;
+
 public class Ciphering {
 	
-	public interface ICipher {
-		byte[] encrypt(byte[] input, String key);
-		byte[] decrypt(byte[] input, String key);
+	public interface IHashable{
+		String createHashString(String input);
 	}
 	
-	public interface IHashable{
-		//CRC32 method
-		long createHash(byte[] input);
-		String createHashString(String input);
+	public interface IKeyGenerator{
+		Key getKeyFromBytes(byte[] keyBytes, int keyOption);
+		KeyPair generateKeyPair();
+	}
+	
+	public interface ICipher {
+		byte[] encrypt(byte[] input);
+		byte[] decrypt(byte[] input);
 	}
 }

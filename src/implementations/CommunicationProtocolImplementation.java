@@ -72,6 +72,22 @@ public class CommunicationProtocolImplementation implements ICommunicationProtoc
 		socket.close();
 	}
 	
-	
+	@Override
+	public void shutDownInputStream() {
+		try {
+			socket.shutdownInput();	
+		}catch(Exception e){
+			System.err.println(e.getMessage());
+		}
+	}
+
+	@Override
+	public void shutDownOutputStream() {
+		try {
+			socket.shutdownOutput();	
+		}catch(Exception e){
+			System.err.println(e.getMessage());
+		}
+	}
 
 }

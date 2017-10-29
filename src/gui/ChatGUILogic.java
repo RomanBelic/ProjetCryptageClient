@@ -2,14 +2,15 @@ package gui;
 
 import java.awt.event.ActionEvent;
 import java.io.File;
-
 import javax.swing.JFileChooser;
 
+import implementations.RSACipher;
 import interfaces.Communication;
+import interfaces.Ciphering.ICipher;
 import models.Message;
 import models.Upload;
 import threading.CommunicationThread;
-import utils.Context;
+import utils.AppContext;
 import utils.Utils;
 
 public class ChatGUILogic extends AbstractUILogic<ChatGUI> implements IChatGUI {
@@ -38,10 +39,15 @@ public class ChatGUILogic extends AbstractUILogic<ChatGUI> implements IChatGUI {
 
 	@Override
 	public void onSendMessageButtonClick(ActionEvent e, Object sender) {
-		if (Context.getCurrentClient().isEmpty())
+		if (AppContext.getCurrentClient().isEmpty())
 			return;
+		
+		byte[] bytesToEncode = ui.messageArea.getText().getBytes();
+		ICipher clientEncryptor = new RSACipher(AppContext.getCurrentClient().getServerKey());
+		byte[] encoedBytes = clientEncryptor.encrypt(bytesToEncode);
+		
 		Message msg = new Message();
-		msg.setMessage(ui.messageArea.getText());
+		msg.setData(encoedBytes);
 		msg.setPackets(Communication.F_PassedChallenge | Communication.F_SentMsg);
 		commThread.sendMessage(msg);
 	}
@@ -58,7 +64,7 @@ public class ChatGUILogic extends AbstractUILogic<ChatGUI> implements IChatGUI {
 	
 	@Override
 	public void onSendFileButtonClick(ActionEvent e, Object sender) {
-		if (fileChooserState != JFileChooser.APPROVE_OPTION || Context.getCurrentClient().isEmpty())
+		if (fileChooserState != JFileChooser.APPROVE_OPTION || AppContext.getCurrentClient().isEmpty())
 			return;
 		File file = ui.fileChooser.getSelectedFile();
 		Upload upload = new Upload();
@@ -69,10 +75,14 @@ public class ChatGUILogic extends AbstractUILogic<ChatGUI> implements IChatGUI {
 	} 
 	
 	private Void onMessageReceived(Message msg){
-		if (Context.getCurrentClient().isEmpty())
+		if (AppContext.getCurrentClient().isEmpty())
 			return null;
-		String txtMessage = String.format("%s: %s\r\n", msg.getSenderName(), msg.getMessage());
-		ui.chatArea.append(txtMessage);
+		
+		ICipher clientDecryptor = new RSACipher(AppContext.getCurrentClient().getClientKeyPair().getPrivate());	
+		byte[] decodedBytes = clientDecryptor.decrypt(msg.getData());
+		String decryptedMessage = new String(decodedBytes);
+		
+		ui.chatArea.append(String.format("%s: %s\r\n", msg.getSenderName(), decryptedMessage));
 		return null;
 	}
 

@@ -1,35 +1,50 @@
 package implementations;
 
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
+import java.security.Key;
+
 import javax.crypto.Cipher;
-import javax.crypto.NoSuchPaddingException;
+
 import interfaces.Ciphering.ICipher;
 
 public class RSACipher implements ICipher {
-
-	private final KeyPairGenerator kpg;
 	
-	public RSACipher() throws NoSuchAlgorithmException, NoSuchPaddingException {
-		Cipher.getInstance("RSA");
-		kpg = KeyPairGenerator.getInstance("RSA");
-		kpg.initialize(512);
-	}
+	private Cipher cipher;
+	private final Key key;
 	
-	public KeyPair generateKeyPair(){
-		return kpg.generateKeyPair();
-	}
-	
-	@Override
-	public byte[] encrypt(byte[] input, String key) {
-		return null;
+	public RSACipher(Key key){
+		this.key = key;
+		try {
+			this.cipher = Cipher.getInstance("RSA");
+		}catch(Exception e){
+			System.err.println(e.getMessage());
+			e.printStackTrace();
+		}
 	}
 
 	@Override
-	public byte[] decrypt(byte[] input, String key) {
-		// TODO Auto-generated method stub
-		return null;
+	public byte[] encrypt(byte[] input) {
+		byte[] bytes = new byte[]{};
+		try {
+			cipher.init(Cipher.ENCRYPT_MODE, key);
+			bytes = cipher.doFinal(input);
+		}catch (Exception e){
+			System.err.println(e.getMessage());
+			e.printStackTrace();
+		}
+		return bytes;
+	}
+
+	@Override
+	public byte[] decrypt(byte[] input) {
+		byte[] bytes = new byte[]{};
+		try {
+			cipher.init(Cipher.DECRYPT_MODE, key);
+			bytes = cipher.doFinal(input);
+		}catch (Exception e){
+			System.err.println(e.getMessage());
+			e.printStackTrace();
+		}
+		return bytes;
 	}
 
 }

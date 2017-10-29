@@ -1,23 +1,35 @@
 package gui;
 
 import java.awt.event.ActionEvent;
+import java.security.Key;
+import java.security.KeyPair;
 
-import interfaces.Communication;
+import javax.crypto.Cipher;
+
+import implementations.SHA256Hasher;
+import implementations.RSAKeyGen;
 import interfaces.Ciphering.IHashable;
+import interfaces.Ciphering.IKeyGenerator;
+import interfaces.Communication;
 import models.Message;
 import threading.CommunicationThread;
-import utils.Utils;
+import utils.AppContext;
+import utils.KeyGenFileHelper;
 
 public class ConnectionGUILogic extends AbstractUILogic<ConnectionGUI> implements IConnectionGUI {
 
 	private final RegisterGUI regUI;
 	private final CommunicationThread commThread;
+	private final IKeyGenerator rsaKeyGen;
+	private final KeyGenFileHelper keyGenFileHelper;
 	
 	public ConnectionGUILogic(ConnectionGUI ui) {
 		super(ui);
 		this.regUI = new RegisterGUI();
 		this.regUI.guiLogic.setOnCloseButtonCallback(this::onReturnedFromRegisterUI);
 		this.commThread = CommunicationThread.getInstance();
+		this.keyGenFileHelper = new KeyGenFileHelper("ClientKeys");
+		this.rsaKeyGen = new RSAKeyGen();
 		this.commThread.getEventAdapter().setOnChallengeListener(this::onChallengeAccepted);
 		this.commThread.getEventAdapter().setOnLoginErrorListener(this::onLoginErrorReceived);
 		this.commThread.getEventAdapter().setOnConnectedListener(this::onConnected);
@@ -58,7 +70,19 @@ public class ConnectionGUILogic extends AbstractUILogic<ConnectionGUI> implement
 		ui.setVisible(true);
 	}
 	
-	private Void onConnected(Message msg){
+	private Void onConnected(Message msg){		
+		String[] splitStr = msg.getPlainText().split(";");
+		int clientId = splitStr.length > 0 ? new Integer(splitStr[0]).intValue() : 0;
+		String clientName = splitStr.length > 1 ? splitStr[1] : null;
+		byte[] serverPublicKeyBytes = msg.getData().length > 0 ? msg.getData() : null;
+
+		KeyPair keyPair = keyGenFileHelper.getKeyPairFromStorage();
+		Key serverPublicKey = rsaKeyGen.getKeyFromBytes(serverPublicKeyBytes, Cipher.PUBLIC_KEY);
+		AppContext.getCurrentClient().setClientKeyPair(keyPair);
+		AppContext.getCurrentClient().setServerKey(serverPublicKey);
+		AppContext.getCurrentClient().setId(clientId);
+		AppContext.getCurrentClient().setName(clientName);
+			
 		ui.setVisible(false);
 		regUI.setVisible(false);
 		ui.dispose();
@@ -68,18 +92,18 @@ public class ConnectionGUILogic extends AbstractUILogic<ConnectionGUI> implement
 	}
 	
 	private Void onLoginErrorReceived (Message msg){
-		ui.errLabel.setText(msg.getMessage());
+		ui.errLabel.setText(msg.getPlainText());
 		return null;
 	}
 	
 	private Void onChallengeAccepted(Message msg){
-		IHashable hasher = Utils.getHasherInstance();
-		String serverKey = msg.getMessage();
-		String clientHash = hasher.createHashString(serverKey);
+		IHashable hasher = new SHA256Hasher();
+		String serverSecretKey = msg.getPlainText();
+		String clientHash = hasher.createHashString(serverSecretKey);
 		String login = ui.userloginJTextfield.getText();
 		String password = hasher.createHashString(new String(ui.passwordJPassword.getPassword()));	
-		String messageText = String.format("%s;%s;%s", clientHash,login,password);
-		msg.setMessage(messageText);
+		String messageText = String.format("%s;%s;%s",clientHash,login,password);
+		msg.setPlainText(messageText);
 		commThread.sendMessage(msg);
 		return null;
 	}

@@ -3,18 +3,11 @@ package utils;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStream;
-
-import implementations.HashImplementation;
-import interfaces.Ciphering.IHashable;
+import java.io.OutputStream;
 
 public class Utils {
-	
-	private static final IHashable hasher = new HashImplementation();
-	
-	public static IHashable getHasherInstance(){
-		return hasher;
-	}
 	
 	public static byte[] readBytesFromFile(File file){
 		byte[] buffer = new byte[2048];
@@ -32,5 +25,24 @@ public class Utils {
 		}
 		return buffer;
 	}
-
+	
+	public static void writeBytesToFile(byte[] bytes, File file){
+		try (OutputStream os = new FileOutputStream(file)){
+			os.write(bytes, 0, bytes.length);
+			os.flush();
+		} catch (Exception e) {
+			System.err.println(e.getMessage());
+			e.printStackTrace();
+		}
+	}
+	
+	public static void writeBytesToFile(byte[] bytes, String path){
+		try (OutputStream os = new FileOutputStream(path)){
+			os.write(bytes, 0, bytes.length);
+			os.flush();
+		} catch (Exception e) {
+			System.err.println(e.getMessage());
+			e.printStackTrace();
+		}
+	}
 }

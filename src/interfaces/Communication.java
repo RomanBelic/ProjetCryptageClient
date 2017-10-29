@@ -15,6 +15,8 @@ public class Communication {
 		T getResponse();
 		void sendResponse(T message);
 		void closeSocket();
+		void shutDownInputStream();
+		void shutDownOutputStream();
 	}
 	
 	public interface IEventAdapter<T>{	
@@ -38,7 +40,7 @@ public class Communication {
 	public static final long F_AskChallenge = 128;
 	public static final long F_AcceptChallenge = 256;
 	public static final long F_AskInscription = 512;
-	public static final long F_AcceptInscription = 512;
+	public static final long F_AcceptInscription = 1024;
 	
 	public static final int No_Content = 204;
 	public static final int OK = 200;
