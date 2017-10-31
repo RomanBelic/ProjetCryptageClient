@@ -20,16 +20,12 @@ public class ConnectionGUILogic extends AbstractUILogic<ConnectionGUI> implement
 
 	private final RegisterGUI regUI;
 	private final CommunicationThread commThread;
-	private final IKeyGenerator rsaKeyGen;
-	private final KeyGenFileHelper keyGenFileHelper;
 	
 	public ConnectionGUILogic(ConnectionGUI ui) {
 		super(ui);
 		this.regUI = new RegisterGUI();
 		this.regUI.guiLogic.setOnCloseButtonCallback(this::onReturnedFromRegisterUI);
 		this.commThread = CommunicationThread.getInstance();
-		this.keyGenFileHelper = new KeyGenFileHelper("ClientKeys");
-		this.rsaKeyGen = new RSAKeyGen();
 		this.commThread.getEventAdapter().setOnChallengeListener(this::onChallengeAccepted);
 		this.commThread.getEventAdapter().setOnLoginErrorListener(this::onLoginErrorReceived);
 		this.commThread.getEventAdapter().setOnConnectedListener(this::onConnected);
@@ -76,8 +72,11 @@ public class ConnectionGUILogic extends AbstractUILogic<ConnectionGUI> implement
 		String clientName = splitStr.length > 1 ? splitStr[1] : null;
 		byte[] serverPublicKeyBytes = msg.getData().length > 0 ? msg.getData() : null;
 
+		KeyGenFileHelper keyGenFileHelper = new KeyGenFileHelper("ClientKeys");
 		KeyPair keyPair = keyGenFileHelper.getKeyPairFromStorage();
+		IKeyGenerator rsaKeyGen = new RSAKeyGen();
 		Key serverPublicKey = rsaKeyGen.getKeyFromBytes(serverPublicKeyBytes, Cipher.PUBLIC_KEY);
+		
 		AppContext.getCurrentClient().setClientKeyPair(keyPair);
 		AppContext.getCurrentClient().setServerKey(serverPublicKey);
 		AppContext.getCurrentClient().setId(clientId);

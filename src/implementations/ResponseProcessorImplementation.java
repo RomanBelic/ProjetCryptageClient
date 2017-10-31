@@ -30,6 +30,9 @@ public class ResponseProcessorImplementation implements IResponseProcessor<Messa
 			}else if (msg.getCode() == Communication.Unauthorized){
 				msg.setPlainText("Unauthorized action");
 				eventAdapter.onLoginErrorReceived(msg);
+			}else if (msg.getCode() == Communication.TooManyRequests){
+				msg.setPlainText("Too many attemps, try later");
+				eventAdapter.onLoginErrorReceived(msg);
 			}
 		}
 		else if ((packets | Communication.F_AskInscription) == Communication.F_AskInscription){

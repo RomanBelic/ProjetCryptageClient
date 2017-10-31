@@ -25,6 +25,14 @@ public class Client {
 	public void setClientKeyPair(KeyPair clientKeyPair) {
 		this.clientKeyPair = clientKeyPair;
 	}
+	
+	public Key getClientPublicKey(){
+		return clientKeyPair != null ? clientKeyPair.getPublic() : null;
+	}
+	
+	public Key getClientPrivateKey(){
+		return clientKeyPair != null ? clientKeyPair.getPrivate() : null;
+	}
 
 	public Key getServerKey() {
 		return serverKey;

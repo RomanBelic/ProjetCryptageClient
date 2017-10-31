@@ -49,4 +49,5 @@ public class Communication {
 	public static final int Conflict = 409;
 	public static final int InternalError = 500;
 	public static final int Unauthorized = 401; 
+	public static final int TooManyRequests = 429;
 }

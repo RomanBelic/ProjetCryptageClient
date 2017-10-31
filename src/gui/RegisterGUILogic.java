@@ -19,7 +19,6 @@ public class RegisterGUILogic extends AbstractUILogic<RegisterGUI> implements IR
 	private ICallback<Object> callbackCloseButton;
 	private final CommunicationThread commThread;
 	private final RegisterGUI ui;
-	private final IRegexChecker passwordRegex;
 	
 	public RegisterGUILogic(RegisterGUI ui){
 		super(ui);
@@ -27,7 +26,6 @@ public class RegisterGUILogic extends AbstractUILogic<RegisterGUI> implements IR
 		this.commThread = CommunicationThread.getInstance();
 		this.commThread.getEventAdapter().setOnSubscribeErrorListener(this::onSubscribeErrorReceived);
 		this.commThread.getEventAdapter().setOnSubscribedListener(this::onSubscribed);
-		this.passwordRegex = new PasswordCheckerImplementation();
 		new RSAKeyGen();
 	}
 	
@@ -38,8 +36,10 @@ public class RegisterGUILogic extends AbstractUILogic<RegisterGUI> implements IR
 	
 	@Override
 	public void onValiderButtonClick(ActionEvent e, Object sender) {	
-		String password = new String(ui.passwordJPassword.getPassword());
 		Message msg = new Message();
+		String password = new String(ui.passwordJPassword.getPassword());
+		
+		IRegexChecker passwordRegex = new PasswordCheckerImplementation();
 		if (!passwordRegex.hasMatch(password)){
 			msg.setPlainText("Password doesn't match requirements");
 			onSubscribeErrorReceived(msg);

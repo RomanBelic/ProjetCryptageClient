@@ -78,7 +78,7 @@ public class ChatGUILogic extends AbstractUILogic<ChatGUI> implements IChatGUI {
 		if (AppContext.getCurrentClient().isEmpty())
 			return null;
 		
-		ICipher clientDecryptor = new RSACipher(AppContext.getCurrentClient().getClientKeyPair().getPrivate());	
+		ICipher clientDecryptor = new RSACipher(AppContext.getCurrentClient().getClientPrivateKey());	
 		byte[] decodedBytes = clientDecryptor.decrypt(msg.getData());
 		String decryptedMessage = new String(decodedBytes);
 		
@@ -93,7 +93,7 @@ public class ChatGUILogic extends AbstractUILogic<ChatGUI> implements IChatGUI {
 
 	@Override
 	public void onOpenFileChooserClick(ActionEvent e, Object sender) {
-		fileChooserState =  ui.fileChooser.showOpenDialog(ui);	
+		fileChooserState = ui.fileChooser.showOpenDialog(ui);	
 		ui.lblChosenFile.setText(fileChooserState == JFileChooser.APPROVE_OPTION ? ui.fileChooser.getSelectedFile().getName() : "");
 	}
 }
